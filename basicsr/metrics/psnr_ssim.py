@@ -8,7 +8,6 @@ from basicsr.utils.color_util import rgb2ycbcr_pt
 from basicsr.utils.registry import METRIC_REGISTRY
 
 
-@METRIC_REGISTRY.register()
 def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):
     """Calculate PSNR (Peak Signal-to-Noise Ratio).
 
@@ -47,8 +46,10 @@ def calculate_psnr(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
         return float('inf')
     return 10. * np.log10(255. * 255. / mse)
 
+if "calculate_psnr" not in METRIC_REGISTRY._obj_map:
+    METRIC_REGISTRY.register()
 
-@METRIC_REGISTRY.register()
+
 def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     """Calculate PSNR (Peak Signal-to-Noise Ratio) (PyTorch version).
 
@@ -80,8 +81,10 @@ def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     mse = torch.mean((img - img2)**2, dim=[1, 2, 3])
     return 10. * torch.log10(1. / (mse + 1e-8))
 
+if "calculate_psnr_pt" not in METRIC_REGISTRY._obj_map:
+    METRIC_REGISTRY.register()
 
-@METRIC_REGISTRY.register()
+
 def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):
     """Calculate SSIM (structural similarity).
 
@@ -127,8 +130,10 @@ def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=Fal
         ssims.append(_ssim(img[..., i], img2[..., i]))
     return np.array(ssims).mean()
 
+if "calculate_ssim" not in METRIC_REGISTRY._obj_map:
+    METRIC_REGISTRY.register()
 
-@METRIC_REGISTRY.register()
+
 def calculate_ssim_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
     """Calculate SSIM (structural similarity) (PyTorch version).
 
@@ -165,6 +170,9 @@ def calculate_ssim_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
 
     ssim = _ssim_pth(img * 255., img2 * 255.)
     return ssim
+
+if "calculate_ssim_pt" not in METRIC_REGISTRY._obj_map:
+    METRIC_REGISTRY.register()
 
 
 def _ssim(img, img2):

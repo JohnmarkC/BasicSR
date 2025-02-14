@@ -7,7 +7,6 @@ from torch.nn import functional as F
 from basicsr.utils.registry import LOSS_REGISTRY
 
 
-@LOSS_REGISTRY.register()
 class GANLoss(nn.Module):
     """Define GAN loss.
 
@@ -110,9 +109,11 @@ class GANLoss(nn.Module):
 
         # loss_weight is always 1.0 for discriminators
         return loss if is_disc else loss * self.loss_weight
+    
+if "GANLoss" not in LOSS_REGISTRY._obj_map:
+    LOSS_REGISTRY.register()
 
 
-@LOSS_REGISTRY.register()
 class MultiScaleGANLoss(GANLoss):
     """
     MultiScaleGANLoss accepts a list of predictions
@@ -138,6 +139,10 @@ class MultiScaleGANLoss(GANLoss):
             return loss / len(input)
         else:
             return super().forward(input, target_is_real, is_disc)
+        
+if "MultiScaleGANLoss" not in LOSS_REGISTRY._obj_map:
+    LOSS_REGISTRY.register()
+
 
 
 def r1_penalty(real_pred, real_img):

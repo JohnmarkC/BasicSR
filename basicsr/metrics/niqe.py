@@ -65,7 +65,9 @@ def compute_feature(block):
     return feat
 
 
-def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, block_size_w=96):
+def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=64, block_size_w=64):
+
+
     """Calculate NIQE (Natural Image Quality Evaluator) metric.
 
     ``Paper: Making a "Completely Blind" Image Quality Analyzer``
@@ -101,6 +103,7 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
     num_block_h = math.floor(h / block_size_h)
     num_block_w = math.floor(w / block_size_w)
     img = img[0:num_block_h * block_size_h, 0:num_block_w * block_size_w]
+
 
     distparam = []  # dist param is actually the multiscale features
     for scale in (1, 2):  # perform on two scales (1, 2)
@@ -141,7 +144,6 @@ def niqe(img, mu_pris_param, cov_pris_param, gaussian_window, block_size_h=96, b
     return quality
 
 
-@METRIC_REGISTRY.register()
 def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y', **kwargs):
     """Calculate NIQE (Natural Image Quality Evaluator) metric.
 
@@ -197,3 +199,6 @@ def calculate_niqe(img, crop_border, input_order='HWC', convert_to='y', **kwargs
     niqe_result = niqe(img, mu_pris_param, cov_pris_param, gaussian_window)
 
     return niqe_result
+
+if 'calculate_niqe' not in METRIC_REGISTRY._obj_map:
+    METRIC_REGISTRY.register()
